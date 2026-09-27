@@ -23,5 +23,10 @@ class DatabaseSeeder extends Seeder
         $this->call(ResourceSeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(TipoInvestimentoSeeder::class);
+        $this->call(ContaSeeder::class);
+        $this->call(InvestimentoSeeder::class);
+        $this->call(PixSeeder::class);
+        $this->call(MovimentacaoInvestimentoSeeder::class);
     }
 }

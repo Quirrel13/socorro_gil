@@ -2,32 +2,59 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $data = [
-            [
-                "name" => "ANTÔNIO MARCOS SILVA",
-                'email' => "antonio@gmail.com",
-                "password" => Hash::make('@1234@5678'),
-                "role_id" => 1,
-            ],
-            [
-                "name" => "RAFAELA SANTOS",
-                'email' => "rafaela@gmail.com",
-                "password" => Hash::make('@1234@5678'),
-                "role_id" => 2,
-            ],
-        ];
-        DB::table('users')->insert($data);
+        $gerenteGeral = Role::where('name', 'gerente_geral')->first();
+        $gerenteConta = Role::where('name', 'gerente_conta')->first();
+        $cliente = Role::where('name', 'cliente')->first();
+
+        User::create([
+            'name' => 'Gerente Geral',
+            'email' => 'gerente.geral@ifbank.com',
+            'password' => Hash::make('12345678'),
+            'role_id' => $gerenteGeral->id,
+        ]);
+
+        User::create([
+            'name' => 'Gerente de Contas 1',
+            'email' => 'gerente1@ifbank.com',
+            'password' => Hash::make('12345678'),
+            'role_id' => $gerenteConta->id,
+        ]);
+
+        User::create([
+            'name' => 'Gerente de Contas 2',
+            'email' => 'gerente2@ifbank.com',
+            'password' => Hash::make('12345678'),
+            'role_id' => $gerenteConta->id,
+        ]);
+
+        User::create([
+            'name' => 'Cliente 1',
+            'email' => 'cliente1@ifbank.com',
+            'password' => Hash::make('12345678'),
+            'role_id' => $cliente->id,
+        ]);
+
+        User::create([
+            'name' => 'Cliente 2',
+            'email' => 'cliente2@ifbank.com',
+            'password' => Hash::make('12345678'),
+            'role_id' => $cliente->id,
+        ]);
+
+        User::create([
+            'name' => 'Cliente 3',
+            'email' => 'cliente3@ifbank.com',
+            'password' => Hash::make('12345678'),
+            'role_id' => $cliente->id,
+        ]);
     }
 }
