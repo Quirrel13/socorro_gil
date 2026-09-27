@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('investimentos', function (Blueprint $table) {
             $table->id();
+            $table->decimal('valor', 10, 2);
+            $table->unsignedBigInteger('conta_id');
+            $table->foreign('conta_id')->references('id')->on('contas');
+            $table->unsignedBigInteger('tipo_investimento_id');
+            $table->foreign('tipo_investimento_id')->references('id')->on('tipo_investimentos');
             $table->timestamps();
+            $table->unique(['conta_id', 'tipo_investimento_id']);
         });
     }
 

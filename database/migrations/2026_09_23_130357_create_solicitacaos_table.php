@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('solicitacaos', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('conta_id');
+            $table->foreign('conta_id')->references('id')->on('contas');
+            $table->decimal('limite', 10, 2);
+            $table->string('status');
+            $table->unsignedBigInteger('gerente_id')->nullable();
+            $table->foreign('gerente_id')->references('id')->on('users');
+            $table->string('motivo_recusa')->nullable();
             $table->timestamps();
         });
     }

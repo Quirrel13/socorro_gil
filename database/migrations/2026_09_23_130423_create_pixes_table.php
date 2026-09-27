@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('pixes', function (Blueprint $table) {
             $table->id();
+            $table->decimal('valor', 10, 2);
+            $table->unsignedBigInteger('conta_origem_id');
+            $table->foreign('conta_origem_id')->references('id')->on('contas');
+            $table->unsignedBigInteger('conta_destino_id');
+            $table->foreign('conta_destino_id')->references('id')->on('contas');
+            $table->string('descricao')->default('Nenhum comentário');
             $table->timestamps();
         });
     }

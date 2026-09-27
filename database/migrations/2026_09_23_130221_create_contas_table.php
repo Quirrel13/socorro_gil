@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('contas', function (Blueprint $table) {
             $table->id();
+            $table->decimal('saldo', 10, 2);
+            $table->decimal('limite', 10, 2);
+            $table->boolean('bloqueado')->default(false);
+            $table->unsignedBigInteger('cliente_id');
+            $table->foreign('cliente_id')->references('id')->on('users');
+            $table->unsignedBigInteger('gerente_id');
+            $table->foreign('gerente_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

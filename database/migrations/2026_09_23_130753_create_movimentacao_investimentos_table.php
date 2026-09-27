@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('movimentacao_investimentos', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('investimento_id');
+            $table->foreign('investimento_id')->references('id')->on('investimentos');
+            $table->decimal('valor', 10, 2);
             $table->timestamps();
         });
     }

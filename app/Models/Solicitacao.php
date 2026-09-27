@@ -11,8 +11,20 @@ class Solicitacao extends Model
     protected $fillable = [
         'conta_id',
         'limite',
-        'status'
+        'status',
+        'gerente_id',
+        'motivo_recusa'
     ];
+
+    protected function conta()
+    {
+        return $this->belongsTo('App\Models\Conta');
+    }
+
+    protected function gerente()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
 
     protected function casts(): array
     {
