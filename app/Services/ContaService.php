@@ -59,6 +59,11 @@ class ContaService extends BaseService
         ], $contaId);
     }
 
+    public function listarPorGerente(int $gerenteId)
+    {
+        return $this->repository->listarPorGerente($gerenteId);
+    }
+
     public function desbloquear(int $contaId)
     {
         $conta = $this->repository->find($contaId);

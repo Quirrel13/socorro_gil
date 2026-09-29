@@ -12,4 +12,11 @@ class ContaRepository extends BaseRepository
     {
         return $this->model->newInstance();
     }
+
+    public function listarPorGerente(int $gerenteId)
+    {
+        return $this->getModel()
+            ->where('gerente_id', $gerenteId)
+            ->get();
+    }
 }

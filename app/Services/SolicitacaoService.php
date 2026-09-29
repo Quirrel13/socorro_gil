@@ -35,6 +35,10 @@ class SolicitacaoService extends BaseService
             throw new Exception('Conta não encontrada.');
         }
 
+        if ($conta->gerente_id !== auth()->id()) {
+            throw new Exception('Você não é o gerente responsável por esta conta.');
+        }
+
         if ($conta->bloqueado) {
             throw new Exception(
                 'Não é possível solicitar aumento para uma conta bloqueada.'
