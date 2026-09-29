@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
 class Pix extends Model
 {
+
+    use AuditableTrait;
 
     protected $fillable = [
         'conta_origem_id',

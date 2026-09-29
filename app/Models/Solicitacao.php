@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\StatusSolicitacao;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
 class Solicitacao extends Model
 {
+
+    use AuditableTrait;
 
     protected $fillable = [
         'conta_id',
