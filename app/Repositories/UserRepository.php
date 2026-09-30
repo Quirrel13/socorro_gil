@@ -35,7 +35,7 @@ class UserRepository extends BaseRepository
             ->whereHas('role', function ($query) {
                 $query->where('name', 'cliente');
             })
-            ->whereHas('conta', function ($query) use ($gerenteId) {
+            ->whereHas('contaCliente', function ($query) use ($gerenteId) {
                 $query->where('gerente_id', $gerenteId);
             })
             ->get();
@@ -47,7 +47,7 @@ class UserRepository extends BaseRepository
             ->whereHas('role', function ($query) {
                 $query->where('name', 'cliente');
             })
-            ->whereHas('conta', function ($query) {
+            ->whereHas('contaCliente', function ($query) {
                 $query->where('bloqueado', true);
             })
             ->get();

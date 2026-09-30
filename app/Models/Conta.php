@@ -46,7 +46,12 @@ class Conta extends Model
 
     public function movimentacoesInvestimentos()
     {
-        return $this->hasMany('App\Models\MovimentacaoInvestimento');
+        return $this->hasManyThrough(
+            'App\Models\MovimentacaoInvestimento',
+            'App\Models\Investimento',
+            'conta_id',
+            'investimento_id'
+        );
     }
 
 }

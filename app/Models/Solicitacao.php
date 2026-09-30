@@ -20,17 +20,17 @@ class Solicitacao extends Model
         'motivo_recusa'
     ];
 
-    protected function conta()
+    public function conta()
     {
         return $this->belongsTo('App\Models\Conta');
     }
 
-    protected function gerente()
+    public function gerente()
     {
         return $this->belongsTo('App\Models\User');
     }
 
-    protected function casts(): array
+    public function casts(): array
     {
         return [
             'status' => StatusSolicitacao::class,
