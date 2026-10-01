@@ -1,4 +1,3 @@
-// Investimento.php
 <?php
 
 namespace App\Models;

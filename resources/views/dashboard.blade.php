@@ -1,17 +1,35 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+<x-ifb.layout titulo="Início">
+    <x-ifb.page-header :title="'Olá, '.explode(' ', auth()->user()->name)[0]" subtitle="Bem-vindo ao IFBANK" />
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
+    <x-ifb.card>
+        <div class="flex items-start gap-4">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center bg-ifb-primary-soft text-ifb-accent shrink-0">
+                <x-ifb.icon name="user" :size="22" />
+            </div>
+            <div>
+                <p class="font-semibold mb-1">Acesso do cliente</p>
+                <p class="text-sm text-ifb-dim">
+                    Saldo, Pix, extrato e investimentos estão disponíveis no aplicativo do cliente.
+                    Esta área é destinada aos gerentes.
+                </p>
             </div>
         </div>
-    </div>
-</x-app-layout>
+    </x-ifb.card>
+</x-ifb.layout><x-ifb.layout titulo="Início">
+    <x-ifb.page-header :title="'Olá, '.explode(' ', auth()->user()->name)[0]" subtitle="Bem-vindo ao IFBANK" />
+
+    <x-ifb.card>
+        <div class="flex items-start gap-4">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center bg-ifb-primary-soft text-ifb-accent shrink-0">
+                <x-ifb.icon name="user" :size="22" />
+            </div>
+            <div>
+                <p class="font-semibold mb-1">Acesso do cliente</p>
+                <p class="text-sm text-ifb-dim">
+                    Saldo, Pix, extrato e investimentos estão disponíveis no aplicativo do cliente.
+                    Esta área é destinada aos gerentes.
+                </p>
+            </div>
+        </div>
+    </x-ifb.card>
+</x-ifb.layout>
