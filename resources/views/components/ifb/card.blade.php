@@ -1,3 +1,5 @@
-<div>
-    <!-- Waste no more time arguing what a good man should be, be one. - Marcus Aurelius -->
+@props(['padded' => true])
+
+<div {{ $attributes->merge(['class' => 'rounded-2xl bg-ifb-card border border-ifb-line '.($padded ? 'p-5' : '')]) }}>
+    {{ $slot }}
 </div>
