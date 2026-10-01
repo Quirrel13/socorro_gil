@@ -1,22 +1,23 @@
+// Pix.php
 <?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 
 class Pix extends Model
 {
-
-    use AuditableTrait;
-
     protected $fillable = [
         'conta_origem_id',
         'conta_destino_id',
         'descricao',
         'valor'
     ];
+
+    protected function casts(): array
+    {
+        return ['valor' => 'decimal:2'];
+    }
 
     public function contaOrigem()
     {
@@ -27,5 +28,4 @@ class Pix extends Model
     {
         return $this->belongsTo('App\Models\Conta', 'conta_destino_id');
     }
-
 }

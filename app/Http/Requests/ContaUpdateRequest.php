@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Conta;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class ContaRequest extends FormRequest
+class ContaUpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -18,6 +20,17 @@ class ContaRequest extends FormRequest
         }
     }
 
+    protected function clienteId(): int
+    {
+        $conta = $this->route('conta');
+
+        if (!$conta instanceof Conta) {
+            $conta = Conta::findOrFail($conta);
+        }
+
+        return $conta->cliente_id;
+    }
+
     public function messages(): array
     {
         return [
@@ -26,10 +39,8 @@ class ContaRequest extends FormRequest
             'email' => 'Informe um endereço de e-mail válido!',
             'unique' => 'Este e-mail já está cadastrado!',
             'confirmed' => 'A confirmação da senha não confere!',
-            'numeric' => 'Este campo deve ser numérico!',
-            'decimal' => 'Informe no máximo :decimal casas decimais!',
-            'min' => 'O valor mínimo permitido é :min!',
-            'max' => 'O valor máximo permitido é :max!',
+            'min' => 'Este campo possui tamanho mínimo de :min caracteres!',
+            'max' => 'Este campo possui tamanho máximo de :max caracteres!',
         ];
     }
 
@@ -37,10 +48,11 @@ class ContaRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'saldo' => 'required|numeric|decimal:0,2|min:0|max:99999999.99',
-            'limite' => 'required|numeric|decimal:0,2|min:0|max:99999999.99',
+            'email' => [
+                'required', 'string', 'email', 'max:255',
+                Rule::unique('users', 'email')->ignore($this->clienteId()),
+            ],
+            'password' => 'nullable|string|min:8|confirmed',
         ];
     }
 }

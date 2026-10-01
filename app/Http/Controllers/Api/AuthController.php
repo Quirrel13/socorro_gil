@@ -32,12 +32,12 @@ class AuthController extends Controller {
         $user = Auth::user();
 
         // Carregando as permissões para o usuário autenticado via API
-        $this->permissionService->getPermissions($user->role_id);
+        $permissions = $this->permissionService->getPermissions($user->role_id);
         $token = $user->createToken($request->device_name)->plainTextToken;
         return response()->json([
             'token' => $token,
             'user' => $user,
-            'permissions' => session('user_permissions') // Retorna as permissõe
+            'permissions' => $permissions
         ]);
     }
 

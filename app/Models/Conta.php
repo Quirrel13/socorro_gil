@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 
-class Conta extends Model
+class Conta extends Model implements Auditable
 {
-
     use AuditableTrait;
-    
+    use SoftDeletes;
+
     protected $fillable = [
         'cliente_id',
         'gerente_id',
@@ -18,6 +19,15 @@ class Conta extends Model
         'limite',
         'bloqueado'
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'saldo' => 'decimal:2',
+            'limite' => 'decimal:2',
+            'bloqueado' => 'boolean',
+        ];
+    }
 
     public function cliente()
     {
@@ -53,5 +63,4 @@ class Conta extends Model
             'investimento_id'
         );
     }
-
 }

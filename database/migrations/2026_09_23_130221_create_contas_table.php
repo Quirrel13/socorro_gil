@@ -21,6 +21,8 @@ return new class extends Migration
             $table->unsignedBigInteger('gerente_id');
             $table->foreign('gerente_id')->references('id')->on('users');
             $table->timestamps();
+            $table->softDeletes();
+            $table->unique('cliente_id');
         });
     }
 

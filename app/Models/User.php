@@ -12,13 +12,16 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; // Linha Adicionada
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+use App\Enums\NomeRole;
 
 #[Fillable(['name', 'email', 'password', 'role_id'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements Auditable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens; // Linha Alterada
+    use HasFactory, Notifiable, HasApiTokens, SoftDeletes; // Linha Alterada
     use AuditableTrait;
 
     /**
@@ -38,6 +41,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function temRole(NomeRole $role): bool
+    {
+        return $this->role?->name === $role->value;
     }
 
     public function role() {

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\NomeRole;
 use App\Models\User;
 use App\Services\PermissionService;
 
@@ -12,64 +13,35 @@ class UserPolicy
     ) {
     }
 
-    public function view(User $user, User $model): bool
+    public function viewAny(User $user): bool
     {
-        // Todo usuário pode visualizar o próprio usuário
-        if ($user->id === $model->id) {
-            return true;
-        }
-
-        // Gerente geral pode visualizar gerente de conta
-        if (
-            $this->service->isAuthorized('gerente_conta.show', $user)
-            && $model->role->name === 'gerente_conta'
-        ) {
-            return true;
-        }
-
-        // Gerente de conta pode visualizar seus clientes
-        if (
-            $user->role->name === 'gerente_conta'
-            && $model->role->name === 'cliente'
-        ) {
-            return $model->contaCliente?->gerente_id === $user->id;
-        }
-
-        return false;
+        return $this->service->isAuthorized('gerente_conta.index', $user);
     }
 
-    public function update(User $user, User $model): bool
+    public function view(User $user, User $model): bool
     {
-        // Todo usuário só pode editar seus próprios dados
-        return $user->id === $model->id;
+        if ((int) $user->id === (int) $model->id) {
+            return true;
+        }
+
+        return $this->service->isAuthorized('gerente_conta.show', $user)
+            && $model->temRole(NomeRole::GERENTE_CONTA);
     }
 
     public function create(User $user): bool
     {
-        // Gerente geral cria gerente de conta
-        if (
-            $this->service->isAuthorized('gerente_conta.create', $user)
-        ) {
-            return true;
-        }
+        return $this->service->isAuthorized('gerente_conta.create', $user);
+    }
 
-        // Gerente de conta cria cliente
-        //
-        // Aqui usamos o fato de que o gerente possui
-        // a responsabilidade de manter clientes.
-        return $user->role->name === 'gerente_conta';
+    public function update(User $user, User $model): bool
+    {
+        return $this->service->isAuthorized('gerente_conta.edit', $user)
+            && $model->temRole(NomeRole::GERENTE_CONTA);
     }
 
     public function delete(User $user, User $model): bool
     {
-        // Gerente geral pode excluir gerente de conta
-        if (
-            $this->service->isAuthorized('gerente_conta.delete', $user)
-            && $model->role->name === 'gerente_conta'
-        ) {
-            return true;
-        }
-
-        return false;
+        return $this->service->isAuthorized('gerente_conta.delete', $user)
+            && $model->temRole(NomeRole::GERENTE_CONTA);
     }
 }

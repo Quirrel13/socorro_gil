@@ -2,63 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\MovimentacaoInvestimentoRequest;
+use App\Models\Investimento;
+use App\Services\InvestimentoService;
+use App\Services\MovimentacaoInvestimentoService;
+use Illuminate\Support\Facades\Gate;
 
 class InvestimentoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(
+        protected InvestimentoService $service,
+        protected MovimentacaoInvestimentoService $movimentacaoService
+    ) {}
+
+    public function show(Investimento $investimento)
     {
-        //
+        Gate::authorize('view', $investimento);
+
+        return view('investimentos.show', compact('investimento'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function aplicar(
+        MovimentacaoInvestimentoRequest $request,
+        Investimento $investimento
+    ) {
+        Gate::authorize('aplicar', $investimento);
+
+        $this->movimentacaoService->aplicar(
+            $investimento->id,
+            $request->validated()['valor']
+        );
+
+        return redirect()
+            ->back()
+            ->with('success', 'Aplicação realizada com sucesso.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function resgatar(
+        MovimentacaoInvestimentoRequest $request,
+        Investimento $investimento
+    ) {
+        Gate::authorize('resgatar', $investimento);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $this->movimentacaoService->resgatar(
+            $investimento->id,
+            $request->validated()['valor']
+        );
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()
+            ->back()
+            ->with('success', 'Resgate realizado com sucesso.');
     }
 }

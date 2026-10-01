@@ -22,6 +22,7 @@ class ResourceSeeder extends Seeder
 
             // CONTAS
             ['name' => 'conta.index'],
+            ['name' => 'conta.show'],
             ['name' => 'conta.create'],
             ['name' => 'conta.edit'],
             ['name' => 'conta.delete'],

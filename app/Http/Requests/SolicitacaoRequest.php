@@ -20,6 +20,8 @@ class SolicitacaoRequest extends FormRequest
             "numeric" => "Este campo deve ser numérico!",
             "min" => "O valor mínimo permitido é :min!",
             "exists" => "O registro informado não existe!",
+            "decimal" => "Informe no máximo :decimal casas decimais!",
+            "max" => "O valor máximo permitido é :max!",
         ];
     }
 
@@ -27,7 +29,7 @@ class SolicitacaoRequest extends FormRequest
     {
         return [
             'conta_id' => 'required|integer|exists:contas,id',
-            'limite' => 'required|numeric|min:0.01',
+            'limite' => 'required|numeric|decimal:0,2|min:0.01|max:99999999.99',
         ];
     }
 }

@@ -8,6 +8,8 @@ class PermissionService extends BaseService {
 
     public function __construct(protected PermissionRepository $repository) {}
 
+    protected array $memo = [];
+
     protected function getRepository(): mixed {
         return $this->repository;
     }
@@ -26,16 +28,18 @@ class PermissionService extends BaseService {
     public function loadPermissions($role) {
 
         $arr_permissions = $this->getPermissions($role);
-        
-        // dd($arr_permissions);
+
         session(['user_permissions' => $arr_permissions]);
     }
 
     public function isAuthorized($resource, $user) {
-        
+
         $permissions = session('user_permissions');
 
-        if(!isset($permissions)) $permissions = $this->getPermissions($user->role_id);
+        // ALTERADO: guarda em memória para não consultar o banco a cada checagem
+        if(!isset($permissions)) {
+            $permissions = $this->memo[$user->role_id] ??= $this->getPermissions($user->role_id);
+        }
 
         if(array_key_exists($resource, $permissions)) {
             return true;

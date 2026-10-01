@@ -2,67 +2,112 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Conta;
 use App\Http\Requests\ContaRequest;
+use App\Models\Conta;
+use App\Services\ContaService;
+use App\Services\UserService;
+use Illuminate\Support\Facades\Gate;
 
 class ContaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(
+        protected ContaService $service,
+        protected UserService $userService
+    ) {}
+
     public function index()
     {
-        $contas = Conta::all();
-        return view('conta.index', compact('contas'));
+        Gate::authorize('viewAny', Conta::class);
+
+        $user = auth()->user();
+
+        if ($user->role->name === 'gerente_conta') {
+            $contas = $this->service->listarPorGerente($user->id);
+        } else {
+            $contas = $this->service->all([
+                'cliente',
+                'gerente'
+            ]);
+        }
+
+        return view('contas.index', compact('contas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('conta.create');
+        Gate::authorize('create', Conta::class);
+
+        $clientes = $this->userService->listarClientes();
+        $gerentes = $this->userService->listarGerentesDeConta();
+
+        return view('contas.create', compact(
+            'clientes',
+            'gerentes'
+        ));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(ContaRequest $request)
     {
-        Conta::create($request->validated());
-        return redirect()->route('contas.index');
+        Gate::authorize('create', Conta::class);
+
+        $this->service->criarConta(
+            $request->validated()
+        );
+
+        return redirect()
+            ->route('conta.index')
+            ->with('success', 'Conta criada com sucesso.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Conta $conta)
     {
-        return view('')
+        Gate::authorize('update', $conta);
+
+        $clientes = $this->userService->listarClientes();
+        $gerentes = $this->userService->listarGerentesDeConta();
+
+        return view('contas.edit', compact(
+            'conta',
+            'clientes',
+            'gerentes'
+        ));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+    public function update(
+        ContaRequest $request,
+        Conta $conta
+    ) {
+        Gate::authorize('update', $conta);
+
+        $this->service->update(
+            $request->validated(),
+            $conta->id
+        );
+
+        return redirect()
+            ->route('conta.index')
+            ->with('success', 'Conta atualizada com sucesso.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function bloquear(Conta $conta)
     {
-        //
+        Gate::authorize('bloquear', $conta);
+
+        $this->service->bloquear($conta->id);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Conta bloqueada com sucesso.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function desbloquear(Conta $conta)
     {
-        //
+        Gate::authorize('desbloquear', $conta);
+
+        $this->service->desbloquear($conta->id);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Conta desbloqueada com sucesso.');
     }
 }

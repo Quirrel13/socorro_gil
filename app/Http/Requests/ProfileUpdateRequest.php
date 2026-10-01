@@ -2,32 +2,30 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    public function messages(): array
-    {
-        return [
-            "required" => "O preenchimento deste campo é obrigatório!",
-            "string" => "Este campo deve ser um texto!",
-            "max" => "Este campo possui tamanho máximo de :max caracteres!",
-            "min" => "Este campo possui tamanho mínimo de :min caracteres!",
-            "confirmed" => "A confirmação da senha não confere!",
-        ];
-    }
-
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'password' => 'nullable|string|min:8|confirmed',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                Rule::unique(User::class)->ignore($this->user()->id),
+            ],
         ];
     }
 }

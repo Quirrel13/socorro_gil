@@ -2,63 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\PixRequest;
+use App\Models\Pix;
+use App\Services\ContaService;
+use App\Services\PixService;
+use Illuminate\Support\Facades\Gate;
 
 class PixController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    public function __construct(
+        protected PixService $service,
+        protected ContaService $contaService
+    ) {}
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        Gate::authorize('create', Pix::class);
+
+        $user = auth()->user();
+
+        $conta = $this->contaService->find(
+            $user->contaCliente?->id
+        );
+
+        return view('pix.create', compact('conta'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(PixRequest $request)
     {
-        //
+        Gate::authorize('create', Pix::class);
+
+        $dados = $request->validated();
+
+        $this->service->realizarPix(
+            auth()->user(),
+            $dados['conta_destino_id'],
+            $dados['valor'],
+            $dados['descricao'] ?? null
+        );
+
+        return redirect()
+            ->back()
+            ->with('success', 'PIX realizado com sucesso.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Pix $pix)
     {
-        //
-    }
+        Gate::authorize('view', $pix);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('pix.show', compact('pix'));
     }
 }

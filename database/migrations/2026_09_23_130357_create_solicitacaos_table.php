@@ -17,8 +17,10 @@ return new class extends Migration
             $table->foreign('conta_id')->references('id')->on('contas');
             $table->decimal('limite', 10, 2);
             $table->string('status');
-            $table->unsignedBigInteger('gerente_id')->nullable();
-            $table->foreign('gerente_id')->references('id')->on('users');
+            $table->unsignedBigInteger('solicitante_id');
+            $table->foreign('solicitante_id')->references('id')->on('users');
+            $table->unsignedBigInteger('avaliador_id')->nullable();
+            $table->foreign('avaliador_id')->references('id')->on('users');
             $table->string('motivo_recusa')->nullable();
             $table->timestamps();
         });

@@ -14,4 +14,9 @@ class InvestimentoService extends BaseService
     {
         return $this->repository;
     }
+
+    public function listarPorConta(int $contaId)
+    {
+        return $this->repository->listarPorConta($contaId);
+    }
 }
