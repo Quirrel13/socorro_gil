@@ -52,6 +52,7 @@ class UserRepository extends BaseRepository
             ->get();
     }
 
+    // usado para impedir remover gerente que ainda tem contas
     public function contarContasDoGerente(int $gerenteId): int
     {
         return $this->getModel()->newQuery()

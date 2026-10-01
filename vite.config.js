@@ -8,4 +8,17 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+        strictPort: true,
+        // endereço que o NAVEGADOR deve usar (vai para o arquivo public/hot)
+        hmr: {
+            host: 'localhost',
+        },
+        // no Windows, o Docker nem sempre avisa quando um arquivo muda
+        watch: {
+            usePolling: true,
+        },
+    },
 });
