@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PixRequest extends FormRequest
 {
@@ -15,7 +16,7 @@ class PixRequest extends FormRequest
     {
         return [
             'valor' => 'required|numeric|decimal:0,2|min:0.01|max:99999999.99',
-            'conta_destino_id' => 'required|integer|exists:contas,id',
+            'conta_destino_id' => ['required', 'integer', Rule::exists('contas', 'id')->whereNull('deleted_at')],
             'descricao' => 'nullable|string|max:255',
         ];
     }

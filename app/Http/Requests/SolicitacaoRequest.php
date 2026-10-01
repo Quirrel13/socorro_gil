@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SolicitacaoRequest extends FormRequest
 {
@@ -28,7 +29,7 @@ class SolicitacaoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'conta_id' => 'required|integer|exists:contas,id',
+            'conta_id' => ['required', 'integer', Rule::exists('contas', 'id')->whereNull('deleted_at')],
             'limite' => 'required|numeric|decimal:0,2|min:0.01|max:99999999.99',
         ];
     }

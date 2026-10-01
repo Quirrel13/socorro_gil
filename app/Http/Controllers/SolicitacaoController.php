@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\NomeRole;
+use App\Exceptions\RegraDeNegocioException;
+use App\Http\Requests\RecusarSolicitacaoRequest;
 use App\Http\Requests\SolicitacaoRequest;
 use App\Models\Solicitacao;
+use App\Services\ContaService;
 use App\Services\SolicitacaoService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class SolicitacaoController extends Controller
 {
     public function __construct(
-        protected SolicitacaoService $service
+        protected SolicitacaoService $service,
+        protected ContaService $contaService
     ) {
     }
 
@@ -21,16 +25,9 @@ class SolicitacaoController extends Controller
 
         $user = auth()->user();
 
-        if ($user->role->name === 'gerente_geral') {
-            $solicitacoes = $this->service->all([
-                'conta',
-                'gerente'
-            ]);
-        } else {
-            $solicitacoes = $this->service->listarPorGerente(
-                $user->id
-            );
-        }
+        $solicitacoes = $user->temRole(NomeRole::GERENTE_GERAL)
+            ? $this->service->listarTodas()
+            : $this->service->listarPorGerente($user->id);
 
         return view('solicitacoes.index', compact('solicitacoes'));
     }
@@ -39,7 +36,10 @@ class SolicitacaoController extends Controller
     {
         Gate::authorize('create', Solicitacao::class);
 
-        return view('solicitacoes.create');
+        // o gerente só pode escolher entre as próprias contas
+        $contas = $this->contaService->listarPorGerente(auth()->id());
+
+        return view('solicitacoes.create', compact('contas'));
     }
 
     public function store(SolicitacaoRequest $request)
@@ -48,10 +48,15 @@ class SolicitacaoController extends Controller
 
         $dados = $request->validated();
 
-        $this->service->solicitar(
-            $dados['conta_id'],
-            $dados['limite']
-        );
+        $conta = $this->contaService->find($dados['conta_id']);
+
+        if (!$conta) {
+            throw new RegraDeNegocioException('Conta não encontrada.');
+        }
+
+        Gate::authorize('solicitarLimite', $conta);
+
+        $this->service->solicitar($conta->id, $dados['limite'], auth()->id());
 
         return redirect()
             ->route('solicitacao.index')
@@ -62,31 +67,21 @@ class SolicitacaoController extends Controller
     {
         Gate::authorize('aprovar', $solicitacao);
 
-        $this->service->aprovar(
-            $solicitacao->id,
-            auth()->id()
-        );
+        $this->service->aprovar($solicitacao->id, auth()->id());
 
         return redirect()
             ->back()
             ->with('success', 'Solicitação aprovada com sucesso.');
     }
 
-    public function recusar(Request $request, Solicitacao $solicitacao)
+    public function recusar(RecusarSolicitacaoRequest $request, Solicitacao $solicitacao)
     {
         Gate::authorize('recusar', $solicitacao);
 
-        $request->validate([
-            'motivo_recusa' => 'required|string|max:255',
-        ], [
-            'required' => 'O preenchimento deste campo é obrigatório!',
-            'string' => 'Este campo deve ser um texto!',
-            'max' => 'Este campo possui tamanho máximo de :max caracteres!',
-        ]);
-
         $this->service->recusar(
             $solicitacao->id,
-            $request->motivo_recusa
+            $request->validated('motivo_recusa'),
+            auth()->id()
         );
 
         return redirect()
