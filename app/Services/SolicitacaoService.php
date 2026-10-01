@@ -141,4 +141,9 @@ class SolicitacaoService extends BaseService
             ], $solicitacaoId);
         });
     }
+    
+    public function contarPendentes(?int $solicitanteId = null): int
+    {
+        return $this->repository->contarPendentes($solicitanteId);
+    }
 }

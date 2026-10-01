@@ -46,4 +46,12 @@ class SolicitacaoRepository extends BaseRepository
             ->lockForUpdate()
             ->find($id);
     }
+
+    public function contarPendentes(?int $solicitanteId = null): int
+    {
+        return $this->getModel()->newQuery()
+            ->where('status', StatusSolicitacao::PENDENTE->value)
+            ->when($solicitanteId, fn ($q) => $q->where('solicitante_id', $solicitanteId))
+            ->count();
+    }
 }

@@ -63,4 +63,10 @@ class Conta extends Model implements Auditable
             'investimento_id'
         );
     }
+
+    public function solicitacoes()
+    {
+        return $this->hasMany('App\Models\Solicitacao');
+    }
+
 }

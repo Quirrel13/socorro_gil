@@ -18,6 +18,7 @@ class UserRepository extends BaseRepository
     {
         return $this->getModel()->newQuery()
             ->whereHas('role', fn ($q) => $q->where('name', NomeRole::GERENTE_CONTA->value))
+            ->withCount('contaGerente')
             ->orderBy('name')
             ->get();
     }

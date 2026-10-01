@@ -45,6 +45,8 @@ class UserController extends Controller
     {
         Gate::authorize('view', $user);
 
+        $user->load('contaGerente.cliente');
+
         return view('users.show', compact('user'));
     }
 

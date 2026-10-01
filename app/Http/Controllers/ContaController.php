@@ -38,7 +38,6 @@ class ContaController extends Controller
     {
         Gate::authorize('create', Conta::class);
 
-        // o gerente responsável é sempre o usuário logado
         $this->service->abrirConta($request->validated(), auth()->id());
 
         return redirect()
@@ -50,7 +49,7 @@ class ContaController extends Controller
     {
         Gate::authorize('view', $conta);
 
-        $conta->load(['cliente', 'investimentos.tipo']);
+        $conta->load(['cliente', 'investimentos.tipo', 'solicitacoes']);
 
         return view('contas.show', compact('conta'));
     }
