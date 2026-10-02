@@ -30,6 +30,10 @@ class InvestimentoController extends Controller
 
         $conta = $this->contaService->contaDoCliente($request->user()->id);
 
+          if ($conta->bloqueado) {
+            throw new RegraDeNegocioException('Conta bloqueada: apenas o saldo pode ser visualizado.');
+        }
+
         return InvestimentoResource::collection(
             $this->service->listarPorConta($conta->id)
         );

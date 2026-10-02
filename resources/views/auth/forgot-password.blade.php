@@ -1,25 +1,21 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+<x-ifb.guest titulo="Recuperar senha">
+    <x-ifb.auth-titulo titulo="Recuperar senha" subtitulo="Informe seu e-mail e enviaremos um link para redefinir a senha" />
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    @if (session('status'))
+        <div class="mb-4 p-3 rounded-xl text-sm bg-ifb-success-soft border border-ifb-success-line text-ifb-success">
+            Enviamos o link de recuperação para o seu e-mail.
         </div>
+    @endif
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    <x-ifb.card>
+        <form method="POST" action="{{ route('password.email') }}" class="space-y-4">
+            @csrf
+
+            <x-ifb.input name="email" type="email" label="E-mail" placeholder="seu@email.com" required autofocus />
+
+            <x-ifb.button size="lg" class="w-full justify-center">Enviar link de recuperação</x-ifb.button>
+        </form>
+
+        <a href="{{ route('login') }}" class="block text-center text-xs mt-4 text-ifb-accent hover:underline">Voltar ao login</a>
+    </x-ifb.card>
+</x-ifb.guest>

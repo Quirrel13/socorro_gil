@@ -19,12 +19,10 @@ class ContaResource extends JsonResource
                 Dinheiro::centavos($this->saldo) + Dinheiro::centavos($this->limite)
             ),
             'bloqueado' => $this->bloqueado,
-            'investimentos' => InvestimentoResource::collection($this->whenLoaded('investimentos')),
+            'investimentos' => $this->when(! $this->bloqueado, fn () => InvestimentoResource::collection($this->whenLoaded('investimentos'))),
             'total_investido' => $this->when(
-                $this->relationLoaded('investimentos'),
-                fn () => Dinheiro::formatar(
-                    $this->investimentos->sum(fn ($i) => Dinheiro::centavos($i->valor))
-                )
+                ! $this->bloqueado && $this->relationLoaded('investimentos'),
+                fn () => Dinheiro::formatar($this->investimentos->sum(fn ($i) => Dinheiro::centavos($i->valor)))
             ),
         ];
     }

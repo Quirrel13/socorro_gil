@@ -1,4 +1,4 @@
-@props(['name', 'label' => null, 'type' => 'text', 'value' => null, 'prefix' => null, 'hint' => null])
+@props(['name', 'label' => null, 'type' => 'text', 'value' => null, 'prefix' => null, 'hint' => null, 'bag' => 'default'])
 
 <div class="flex flex-col gap-1.5">
     @if ($label)
@@ -23,7 +23,7 @@
         <p class="text-xs text-ifb-dim">{{ $hint }}</p>
     @endif
 
-    @error($name)
+    @error($name, $bag)
         <p class="text-xs text-ifb-danger">{{ $message }}</p>
     @enderror
 </div>

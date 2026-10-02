@@ -2,47 +2,63 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\NomeRole;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Services\PermissionService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Services\PermissionService;
 
-class AuthController extends Controller {
-
-    protected $permissionService;
-
-    public function __construct(PermissionService $permissionService) {
-        $this->permissionService = $permissionService;
+class AuthController extends Controller
+{
+    public function __construct(
+        protected PermissionService $permissionService
+    ) {
     }
-    public function login(Request $request) {
 
-        $request->validate([
+    public function login(Request $request): JsonResponse
+    {
+        $dados = $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
-            'device_name' => ['required', 'string'], // Nome do dispositivo para o token
+            'device_name' => ['required', 'string', 'max:100'], // nome do dispositivo (identifica o token)
         ]);
 
-        if (! Auth::attempt($request->only('email', 'password'))) {
+        if (! Auth::validate(['email' => $dados['email'], 'password' => $dados['password']])) {
             throw ValidationException::withMessages([
                 'email' => ['As credenciais fornecidas estão incorretas.'],
             ]);
         }
 
-        $user = Auth::user();
+        $user = User::with('role')->where('email', $dados['email'])->firstOrFail();
 
-        // Carregando as permissões para o usuário autenticado via API
-        $permissions = $this->permissionService->getPermissions($user->role_id);
-        $token = $user->createToken($request->device_name)->plainTextToken;
+        if (! $user->temRole(NomeRole::CLIENTE)) {
+            return response()->json([
+                'message' => 'Este acesso é exclusivo para clientes. Gerentes devem usar o sistema web.',
+            ], 403);
+        }
+
+        $user->tokens()->where('name', $dados['device_name'])->delete();
+        $token = $user->createToken($dados['device_name'])->plainTextToken;
+
         return response()->json([
             'token' => $token,
-            'user' => $user,
-            'permissions' => $permissions
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role?->name,
+            ],
+            'permissions' => $this->permissionService->getPermissions($user->role_id),
         ]);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request): JsonResponse
+    {
         $request->user()->currentAccessToken()->delete();
+
         return response()->json(['message' => 'Token revogado com sucesso.']);
     }
 }
