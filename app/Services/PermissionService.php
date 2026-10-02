@@ -26,24 +26,17 @@ class PermissionService extends BaseService {
     }
 
     public function loadPermissions($role) {
-
-        $arr_permissions = $this->getPermissions($role);
-
-        session(['user_permissions' => $arr_permissions]);
+        session([
+            'user_permissions'      => $this->getPermissions($role),
+            'user_permissions_role' => $role,
+        ]);
     }
 
     public function isAuthorized($resource, $user) {
+        $permissions = ((int) session('user_permissions_role') === (int) $user->role_id)
+            ? session('user_permissions')
+            : ($this->memo[$user->role_id] ??= $this->getPermissions($user->role_id));
 
-        $permissions = session('user_permissions');
-
-        // ALTERADO: guarda em memória para não consultar o banco a cada checagem
-        if(!isset($permissions)) {
-            $permissions = $this->memo[$user->role_id] ??= $this->getPermissions($user->role_id);
-        }
-
-        if(array_key_exists($resource, $permissions)) {
-            return true;
-        }
-        return false;
+        return isset($permissions[$resource]);
     }
 }

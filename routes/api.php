@@ -6,8 +6,6 @@ use App\Http\Controllers\Api\ExtratoController;
 use App\Http\Controllers\Api\InvestimentoController;
 use App\Http\Controllers\Api\MovimentacaoInvestimentoController;
 use App\Http\Controllers\Api\PixController;
-use App\Http\Controllers\CursoController;
-use App\Http\Controllers\DisciplinaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,11 +16,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
-    // Cursos
-    Route::apiResource('cursos', CursoController::class);
-    // Disciplinas
-    Route::apiResource('disciplinas', DisciplinaController::class);
 
     // ---- Cliente (SPA Svelte) ----
     Route::get('/conta', [ContaController::class, 'show']);                 // saldo + investimentos

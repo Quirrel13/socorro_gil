@@ -32,9 +32,9 @@ class PixPolicy
         $contaOrigem = $pix->contaOrigem;
         $contaDestino = $pix->contaDestino;
 
-        return $contaOrigem->cliente_id === $user->id
-            || $contaOrigem->gerente_id === $user->id
-            || $contaDestino->cliente_id === $user->id
-            || $contaDestino->gerente_id === $user->id;
+        return (int) $contaOrigem->cliente_id === (int) $user->id
+            || (int) $contaOrigem->gerente_id === (int) $user->id
+            || (int) $contaDestino->cliente_id === (int) $user->id
+            || (int) $contaDestino->gerente_id === (int) $user->id;
     }
 }

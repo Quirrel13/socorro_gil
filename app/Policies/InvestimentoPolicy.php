@@ -22,15 +22,15 @@ class InvestimentoPolicy
     {
         return $this->service->isAuthorized('investimento.index', $user)
             && (
-                $investimento->conta->cliente_id === $user->id ||
-                $investimento->conta->gerente_id === $user->id
+                (int) $investimento->conta->cliente_id === (int) $user->id ||
+                (int) $investimento->conta->gerente_id === (int) $user->id
             );
     }
 
     public function aplicar(User $user, Investimento $investimento): bool
     {
         return $this->service->isAuthorized('investimento.aplicar', $user)
-            && $investimento->conta->cliente_id === $user->id;
+            && (int) $investimento->conta->cliente_id === (int) $user->id;
     }
 
     public function resgatar(User $user, Investimento $investimento): bool

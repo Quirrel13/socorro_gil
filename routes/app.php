@@ -4,27 +4,11 @@ use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\ContaController;
 use App\Http\Controllers\SolicitacaoController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AlunoController; //Adicionado
-use App\Http\Controllers\CursoController;
-use App\Http\Controllers\DisciplinaController; //Adicionado
-use App\Http\Controllers\MatriculaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/home', function () {
     return view('home');
 })->name('home')->middleware(['auth', 'verified']);
-
-Route::resource('/curso', CursoController::class)
-    ->middleware(['auth', 'verified']);
-
-Route::resource('/disciplina', DisciplinaController::class)
-    ->middleware(['auth', 'verified']);
-
-Route::resource('/aluno', AlunoController::class)
-    ->middleware(['auth', 'verified']);
-
-Route::resource('/matricula', MatriculaController::class)
-    ->middleware(['auth', 'verified']);
 
 Route::get('/audit/curso/{id}', [CursoController::class, 'audit'])
     ->name('curso.audit')->middleware(['auth', 'verified']);
@@ -36,7 +20,7 @@ Route::get('/audit/curso/{id}', [CursoController::class, 'audit'])
     Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria.index');
 
     // Gerente de Conta: contas dos clientes
-    Route::resource('/conta', ContaController::class);
+    Route::resource('/conta', ContaController::class)->parameters(['conta' => 'conta']);;
     Route::patch('/conta/{conta}/bloquear', [ContaController::class, 'bloquear'])->name('conta.bloquear');
     Route::patch('/conta/{conta}/desbloquear', [ContaController::class, 'desbloquear'])->name('conta.desbloquear');
     Route::get('/conta/{conta}/extrato', [ContaController::class, 'extrato'])->name('conta.extrato');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\RegraDeNegocioException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MovimentacaoInvestimentoRequest;
 use App\Http\Resources\InvestimentoResource;

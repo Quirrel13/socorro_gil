@@ -26,7 +26,7 @@ class MovimentacaoInvestimentoPolicy
 
         $conta = $movimentacao->investimento->conta;
 
-        return $conta->cliente_id === $user->id
-            || $conta->gerente_id === $user->id;
+        return  (int) $conta->cliente_id === (int) $user->id
+            || (int) $conta->gerente_id === (int) $user->id;
     }
 }
